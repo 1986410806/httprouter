@@ -71,7 +71,7 @@ func TestRouter2(t *testing.T) {
 	router := New()
 
 	routed := false
-	router.Handle("GET", "/u.ser/:name.json", func(w http.ResponseWriter, r *http.Request, ps Params) {
+	router.Handle("GET", "/u.ser/:name.json/something.morestuff", func(w http.ResponseWriter, r *http.Request, ps Params) {
 		routed = true
 		want := Params{Param{"name", "gopher"}}
 		if !reflect.DeepEqual(ps, want) {
@@ -81,7 +81,7 @@ func TestRouter2(t *testing.T) {
 
 	w := new(mockResponseWriter)
 
-	req, _ := http.NewRequest("GET", "/u.ser/gopher.json", nil)
+	req, _ := http.NewRequest("GET", "/u.ser/gopher.json/something.morestuff", nil)
 	router.ServeHTTP(w, req)
 
 	if !routed {
