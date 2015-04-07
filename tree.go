@@ -142,7 +142,7 @@ func (n *node) addRoute(path string, handle Handle) {
 					// Check if the wildcard matches
 					if len(path) >= len(n.path) && n.path == path[:len(n.path)] {
 						// check for longer wildcard, e.g. :name and :names
-						if len(n.path) >= len(path) || path[len(n.path)] == '/' {
+						if len(n.path) >= len(path) || path[len(n.path)] == '/' || path[len(n.path)] == '.' {
 							continue walk
 						}
 					}
@@ -153,7 +153,7 @@ func (n *node) addRoute(path string, handle Handle) {
 				c := path[0]
 
 				// slash after param
-				if n.nType == param && c == '/' && len(n.children) == 1 {
+				if n.nType == param && (c == '/' || c == '.') && len(n.children) == 1 {
 					n = n.children[0]
 					n.priority++
 					continue walk
@@ -213,7 +213,7 @@ func (n *node) insertChild(numParams uint8, path string, handle Handle) {
 
 		// find wildcard end (either '/' or path end)
 		end := i + 1
-		for end < max && path[end] != '/' {
+		for end < max && path[end] != '/' && path[end] != '.' {
 			switch path[end] {
 			// the wildcard name must not contain ':' and '*'
 			case ':', '*':
@@ -343,7 +343,7 @@ walk: // Outer loop for walking the tree
 				case param:
 					// find param end (either '/' or path end)
 					end := 0
-					for end < len(path) && path[end] != '/' {
+					for end < len(path) && path[end] != '/' && path[end] != '.' {
 						end++
 					}
 
